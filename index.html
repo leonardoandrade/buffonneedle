@@ -1,0 +1,243 @@
+<html>
+<head>
+<script src="../owa.js"></script>
+<link href="sexybuttons.css" rel="stylesheet" type="text/css">
+<title>Buffon's Needle</title>
+<style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #theCanvas {
+        border: 2px solid #444AEB;
+        background-color: #FFFFFF;
+        -moz-border-radius:8px;
+        border-radius:8px;
+      }
+      .large_input
+      {
+            border-width: 2px;
+            border-style: solid;
+            border-color: #777AEB;
+        -moz-border-radius:3px;
+        border-radius:3px;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12pt;
+            color: #333333;
+            height: 25px;
+      }
+     
+      
+      .large_input:hover {
+          border-color: #000000;
+            border-width: 2px;
+        }
+      .large_input:focus {
+          border-color: #000000;
+         border-width: 2px;
+}
+    </style>
+<script src="./js/Utils.js"></script>
+<script src="./js/BuffonNeedle.js"></script>
+<script>
+
+var worker;
+var canvas_width;
+var canvar_height;
+function terminate_worker()
+{
+    worker.terminate();
+}
+
+function after_loading()
+{
+
+
+    //alert("height:"+document.body.clientHeight+" width:"+document.body.clientWidth);
+    document.bgColor=RandomColorHex();
+    
+    canvas_height=document.body.clientHeight-200;
+    canvas_width=document.body.clientWidth-200;
+    var canvas=document.getElementById("theCanvas");
+    canvas.width=canvas_width;
+    canvas.height=canvas_height;
+    //position of divs:
+    var div_pi=document.getElementById("div_pi");
+    div_pi.style.left= document.body.clientWidth/2-Math.min(300,document.body.clientWidth/2);
+    div_pi.style.position= 'relative';
+    var div_tosses=document.getElementById("div_tosses");
+    div_tosses.style.left= document.body.clientWidth/2-Math.min(300,document.body.clientWidth/2);
+    div_tosses.style.position= 'relative';
+    
+    
+    // initialize worker and message passing
+
+    if(worker!=undefined)
+    {
+        worker.terminate();
+    }
+    worker = new Worker('./js/buffon_needle_worker_script.js');
+    worker.addEventListener('message', function(e) {
+        //alert(JSON.stringify(e.data));
+        switch(e.data.cmd)
+        {
+            case 'clear_canvas':
+                var canvas=document.getElementById("theCanvas");
+                canvas.width = canvas.width;
+                canvas.height = canvas.height;
+                break;
+            case 'draw_strips':
+                draw_strips_to_canvas(e.data.strips);
+                break;
+            case 'draw_needles':
+                draw_needles_to_canvas(e.data.needles);
+                break;
+            case 'set_results':
+                //alert(document.getElementById('span_pi'));
+                document.getElementById('div_pi_content').innerHTML=e.data.pi;   
+                document.getElementById('span_tosses_numerator').innerHTML=e.data.number_hits;   
+                document.getElementById('span_tosses_denominator').innerHTML=e.data.number_needles;  
+                break;
+        }
+        
+
+  }, false);
+    start_worker();
+    
+}
+
+
+
+
+/*draws the strips to canvas */
+function draw_strips_to_canvas(strips)
+{
+
+    //the images
+    var images=new Array();
+    
+    var image1=new Image();
+    image1.src='img/wood1.jpg';
+    images.push(image1);
+    
+    
+    var image2=new Image();
+    image2.src='img/wood2.jpg';
+    images.push(image2);
+    
+    
+    
+    
+    var canvas=document.getElementById("theCanvas");
+    var context = canvas.getContext("2d");
+    context.beginPath();
+    context.drawImage(images[0], 0,0, strips[0].x1,strips[0].y1);
+    for(var i=1; i<strips.length;i++)
+    {
+        context.drawImage(images[i%2], strips[i-1].x0, strips[i-1].y0 , strips[i].x0-strips[i-1].x0,strips[i].y1-strips[i].y0);
+    }
+    
+    for(var i=0; i<strips.length;i++)
+    {  
+        context.moveTo(strips[i].x0, strips[i].y0);
+        context.lineTo(strips[i].x1, strips[i].y1);
+        context.lineWidth = 0.5;
+        context.strokeStyle = "#000000";
+        
+       
+    }
+ context.stroke();    
+}
+
+function draw_needles_to_canvas(needles)
+{ 
+    var canvas=document.getElementById("theCanvas");
+    var context = canvas.getContext("2d");
+    for(var i=0; i< needles.length; i++)
+    {   
+        var needle=needles[i];
+        context.beginPath();
+        context.moveTo(needle.x0, needle.y0);
+        context.lineTo(needle.x1, needle.y1);
+        context.lineWidth = 0.5;
+        if(needle.intersects_strip==true)
+        {
+            context.strokeStyle = "#FFFFFF";
+        }
+        else
+        {
+            context.strokeStyle = "#AAAAAA";
+        }
+        context.stroke();
+    }
+}
+
+
+function start_worker()
+{
+
+
+    var number_of_strips=document.getElementById('input_strips').value;
+    var number_of_needles=document.getElementById('input_needles').value;
+   
+    worker.postMessage({'cmd': 'start', 'width':canvas_width, 'height':canvas_height, 'number_of_strips': number_of_strips, 'number_of_needles': number_of_needles });
+    //bf.init(800,300, number_of_strips,number_of_needles);
+    //bf.drawToCanvas(document.getElementById('theCanvas'));
+    //bf.setCanvas(document.getElementById('theCanvas'));
+    //bf.run();
+    //bf.computePI();
+    //alert(bf.getPI());
+    //document.getElementById('div_pi').innerHTML="<font size=12>&pi; :</font><font size=6> "+bf.getPI()+"</font>";
+
+}
+function debug()
+{
+    alert(bf.dump());
+}
+
+function stop_worker()
+{
+   if(worker!=undefined)
+    {
+        worker.terminate();
+    }
+}
+</script>
+</head>
+<body onLoad='after_loading()'>
+<center>
+<table><tr><td align='center'>
+<h3>Buffon's Needle Experiment (Monte Carlo Simulation)</h3>
+</td></tr>
+<tr><td align='center'>
+<b><i>
+&nbsp;&nbsp;planks:&nbsp;&nbsp;<input id='input_strips' class='large_input' type=text size=4 value='12' />
+&nbsp;&nbsp;tosses:&nbsp;&nbsp;<input id='input_needles'  class='large_input' type=text size=10 value='1000' />
+<!--<input type=button onClick='after_loading();' value='GO!' />-->
+<button class="sexybutton" onClick='after_loading();'><span><span><span class="play">GO!</span></span></span></button>
+<button class="sexybutton" onClick='stop_worker();'><span><span><span class="stop">Stop</span></span></span></button>
+</b></i>
+<!--<input type=button onClick='pause_worker();' value='PAUSE' />-->
+<!--<input type=button onClick='stop_worker();' value='STOP' />-->
+</td></tr>
+<tr><td width=100%>
+<table>
+    <tr>
+       <!--<td style="position:relative width:30%"></td><td align='left' style="position:relative, width:40%"><div id='div_pi'><font  color='#444AEB' size=12>&pi;:</font><font  color='#444AEB' size=6><span id='div_pi_content'></span></font></div></td><td><span id='div_tosses'>...</span></td>-->
+       <td>
+            <div id='div_pi' style='position:relative'><font  color='#444AEB' size=12>&pi;:</font><font  color='#444AEB' size=6><span id='div_pi_content'></span></font></div>
+            
+            <div id='div_tosses' style='position:relative'><i>hits=<span id='span_tosses_numerator'> </span> tosses=<span id='span_tosses_denominator'></span></i></div>
+            
+       </td>
+    </tr>
+</table>
+</td></tr>
+<tr><td align='center'>
+<canvas id="theCanvas" width="0" height="0"></canvas>
+</td></tr><tr><td>
+<i>A 1777 idea of  Georges Louis Leclerc, Count of Buffon. 
+For more information: <a href='http://en.wikipedia.org/wiki/Buffon%27s_needle'>http://en.wikipedia.org/wiki/Buffon's_needle</a></i>.
+</td></tr></table>
+</body>
+</html>

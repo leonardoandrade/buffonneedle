@@ -1,4 +1,4 @@
-
+/*is counterclocwise?*/
 function ccw(x1, y1, x2, y2, x3, y3)
 {
 
@@ -6,6 +6,7 @@ function ccw(x1, y1, x2, y2, x3, y3)
 
 } 
 
+/* check intersection of lines */
 function linesIntersect( seg1, seg2 )
 {
 
@@ -18,7 +19,7 @@ function linesIntersect( seg1, seg2 )
 
 }
 
-
+/*class for Buffon's needle implementation*/
 function BuffonNeedle()
 {
 
@@ -178,8 +179,6 @@ function BuffonNeedle()
     }
     
     
-
-
     
     this.drawToCanvas=function(canvas_object)
     {

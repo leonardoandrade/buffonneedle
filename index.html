@@ -1,5 +1,6 @@
 <html>
 <head>
+<!--comment next line if now using Open Web Analytics -->
 <script src="../owa.js"></script>
 <link href="sexybuttons.css" rel="stylesheet" type="text/css">
 <title>Buffon's Needle</title>
@@ -9,7 +10,7 @@
         padding: 0px;
       }
       #theCanvas {
-        border: 2px solid #444AEB;
+        border: 2px solid #444444;
         background-color: #FFFFFF;
         -moz-border-radius:8px;
         border-radius:8px;
@@ -18,7 +19,7 @@
       {
             border-width: 2px;
             border-style: solid;
-            border-color: #777AEB;
+            border-color: #444444;
         -moz-border-radius:3px;
         border-radius:3px;
             font-family: Arial, Helvetica, sans-serif;
@@ -37,13 +38,21 @@
          border-width: 2px;
 }
     </style>
-<script src="./js/Utils.js"></script>
 <script src="./js/BuffonNeedle.js"></script>
 <script>
 
 var worker;
 var canvas_width;
 var canvar_height;
+
+
+//preload the images to array
+
+var images=new Array(); 
+
+    
+
+
 function terminate_worker()
 {
     worker.terminate();
@@ -52,9 +61,6 @@ function terminate_worker()
 function after_loading()
 {
 
-
-    //alert("height:"+document.body.clientHeight+" width:"+document.body.clientWidth);
-    document.bgColor=RandomColorHex();
     
     canvas_height=document.body.clientHeight-200;
     canvas_width=document.body.clientWidth-200;
@@ -107,26 +113,10 @@ function after_loading()
 }
 
 
-
-
 /*draws the strips to canvas */
 function draw_strips_to_canvas(strips)
 {
 
-    //the images
-    var images=new Array();
-    
-    var image1=new Image();
-    image1.src='img/wood1.jpg';
-    images.push(image1);
-    
-    
-    var image2=new Image();
-    image2.src='img/wood2.jpg';
-    images.push(image2);
-    
-    
-    
     
     var canvas=document.getElementById("theCanvas");
     var context = canvas.getContext("2d");
@@ -202,9 +192,27 @@ function stop_worker()
         worker.terminate();
     }
 }
+
+window.onload = function() {
+    var image1=new Image();
+    image1.src='img/wood1.jpg';
+    images.push(image1);
+    var image2=new Image();
+    image2.src='img/wood2.jpg';
+    images.push(image2);
+
+
+    after_loading();
+    
+    
+    
+};
+
+
 </script>
 </head>
-<body onLoad='after_loading()'>
+<!--<body onLoad='after_loading()'>-->
+<body>
 <center>
 <table><tr><td align='center'>
 <h3>Buffon's Needle Experiment (Monte Carlo Simulation)</h3>

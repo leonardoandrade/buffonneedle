@@ -210,12 +210,12 @@
 	
 .sexybutton span,
 .sexybutton.sexysilver span {
-	background-image: url(img/button_right.gif);
+	background-image: url(../../img/button_right.gif);
 }
 
 .sexybutton span span,
 .sexybutton.sexysilver span span {
-	background-image: url(img/button_left.gif);
+	background-image: url(../../img/button_left.gif);
 }
 
 /* Orange Button Skin */
@@ -435,11 +435,11 @@
 .sexybutton span.prev			{ background-image: url(images/icons/silk/resultset_previous.png) !important; }
 .sexybutton span.next			{ background-image: url(images/icons/silk/resultset_next.png) !important; }
 .sexybutton span.last			{ background-image: url(images/icons/silk/resultset_last.png) !important; }
-.sexybutton span.play			{ background-image: url(img/play_blue.png) !important; }
+.sexybutton span.play			{ background-image: url(../../img/play_blue.png) !important; }
 .sexybutton span.pause			{ background-image: url(images/icons/silk/pause_blue.png) !important; }
 .sexybutton span.rewind			{ background-image: url(images/icons/silk/rewind_blue.png) !important; }
 .sexybutton span.forward		{ background-image: url(img/forward_blue.png) !important; }
-.sexybutton span.stop			{ background-image: url(img/stop_blue.png) !important; }
+.sexybutton span.stop			{ background-image: url(../../img/stop_blue.png) !important; }
 .sexybutton span.reload			{ background-image: url(images/icons/silk/reload.png) !important; }
 .sexybutton span.sync			{ background-image: url(images/icons/silk/arrow_refresh.png) !important; }
 .sexybutton span.save			{ background-image: url(images/icons/silk/disk.png) !important; }

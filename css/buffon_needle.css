@@ -1,0 +1,34 @@
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+#theCanvas {
+    border: 2px solid #444444;
+    background-color: #FFFFFF;
+    /*-moz-border-radius:8px;
+    border-radius:8px;*/
+}
+
+.large_input
+{
+    border-width: 2px;
+    border-style: solid;
+    border-color: #444444;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    color: #333333;
+    height: 25px;
+}
+
+.large_input:hover {
+    border-color: #000000;
+    border-width: 2px;
+}
+
+.large_input:focus {
+    border-color: #000000;
+    border-width: 2px;
+}

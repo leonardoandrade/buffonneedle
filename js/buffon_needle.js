@@ -28,33 +28,27 @@ BuffonNeedle.prototype.run = function () {
     }
 }
 
-BuffonNeedle.prototype.getStrips=function()
+BuffonNeedle.prototype.getStrips = function()
 {
     return this.strips;
 }
 
 
-BuffonNeedle.prototype.getNumberNeedles=function()
+BuffonNeedle.prototype.getNumberNeedles = function()
 {
-    return this.needles.length+this.currentTotalNeedles;
+    return this.needles.length;
 }
 
-BuffonNeedle.prototype.getNumberHits=function()
+BuffonNeedle.prototype.getNumberHits = function()
 {
     return this.currentTotalHits;
 }
 
-BuffonNeedle.prototype.setHandlerOnNewNeedle = function(f) {
-    this.onNewNeedle = f;
-}
-
-
 BuffonNeedle.prototype.computePI = function () {
 
     /*compute PI */
-
-    total_needles = this.needles.length;
-    hits = 0;
+    var total_needles = this.needles.length;
+    var hits = 0;
     for (var i = 0; i < this.needles.length; i++) {
         if (this.needles[i].intersects_strip) {
             hits++;
@@ -64,11 +58,9 @@ BuffonNeedle.prototype.computePI = function () {
 
     this.PI = ((2 * this.needleLength * total_needles) / (hits * this.interval));
 
-
-    this.currentTotalNeedles += total_needles;
-    this.currentTotalHits += hits;
-    this.needles = [];
-    //this.PI=2*total_needles/hits;
+    this.currentTotalNeedles = total_needles;
+    this.currentTotalHits = hits;
+    //this.needles = [];
 };
 
 BuffonNeedle.prototype.getPI = function () {
@@ -78,38 +70,34 @@ BuffonNeedle.prototype.getPI = function () {
 
 BuffonNeedle.prototype.addRandomNeedle = function () {
     //random_x=(this.needleLength/2)+Math.floor((Math.random()*(this.width-this.needleLength)));
-    random_x = Math.random() * this.width;
-    random_y = Math.random() * this.height;
+    var random_x = Math.random() * this.width;
+    var random_y = Math.random() * this.height;
 
     var angle = (Math.random() * Math.PI);
 
     //to the rotation by points in origin
-    _tmp_x0 = this.needleLength / 2;
-    _tmp_y0 = 0;
+    var _tmp_x0 = this.needleLength / 2;
+    var _tmp_y0 = 0;
 
-    rot_x0 = (_tmp_x0 * Math.cos(angle)) - (_tmp_y0 * Math.sin(angle));
-    rot_y0 = (_tmp_x0 * Math.sin(angle)) + (_tmp_y0 * Math.cos(angle));
+    var rot_x0 = (_tmp_x0 * Math.cos(angle)) - (_tmp_y0 * Math.sin(angle));
+    var rot_y0 = (_tmp_x0 * Math.sin(angle)) + (_tmp_y0 * Math.cos(angle));
 
-    x0 = rot_x0 + random_x;
-    y0 = rot_y0 + random_y;
+    var x0 = rot_x0 + random_x;
+    var y0 = rot_y0 + random_y;
 
-    x1 = random_x - (x0 - random_x);
-    y1 = random_y - (y0 - random_y);
+    var x1 = random_x - (x0 - random_x);
+    var y1 = random_y - (y0 - random_y);
 
-    needle = {x0: x0, y0: y0, x1: x1, y1: y1, intersects_strip: false};
+    var needle = {x0: x0, y0: y0, x1: x1, y1: y1, intersects_strip: false};
     for (var i = 0; i < this.strips.length; i++) {
         if (GEOM_UTILS.linesIntersect(this.strips[i], needle)) {
             needle.intersects_strip = true;
+            break;
         }
     }
     this.needles.push(needle);
     //alert("random_x:"+random_x+" random_y:"+random_y+" rotation angle:"+angle+ "points:"+x0+" "+y0+" "+x1+" "+y1+" ");
 
-    //if handler of 'new needle event is set, call it'
-    //console.log(this.onNewNeedle);
-    if(this.onNewNeedle) {
-        this.onNewNeedle(needle);
-    }
     return needle;
 };
 
@@ -141,11 +129,9 @@ BuffonNeedle.prototype.averageYDiff = function () {
     return sum / this.needles.length;
 };
 
-
-
 BuffonNeedle.prototype.dump = function () {
     ret = "";
-    ret += " whidth:" + this.width + " heigth:" + this.height + " number strips:" + this.strips.length + " number needles:" + this.needles.length + "\n";
+    ret += " width:" + this.width + " heigth:" + this.height + " number strips:" + this.strips.length + " number needles:" + this.needles.length + "\n";
     ret += " official needle length: " + this.needleLength + ", computed needle length:" + this.averageNeedleLength() + "average X diff:"+ this.averageXDiff() + "average Y diff:"+ this.averageYDiff();
     return ret;
 };

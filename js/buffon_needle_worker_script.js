@@ -17,24 +17,21 @@ function initialize(width, height, number_of_strips, _number_of_needles)
 }
 
 //run loop
-function run()
-{   var count=0;
+function run() {
+    var count=0;
     var tmp=new Array();
-    while(stopped==false && buffon_needle_object.getNumberNeedles()<number_of_needles)
+    while(stopped==false && buffon_needle_object.getNumberNeedles() < number_of_needles)
     {
-
-       needle=buffon_needle_object.addRandomNeedle();
+       needle = buffon_needle_object.addRandomNeedle();
        tmp.push(needle);
 
-       if(count%REFRESH_RATE==0)
+       if(count % REFRESH_RATE === 0)
        {
            buffon_needle_object.computePI();
            self.postMessage({"cmd": "draw_needles", 'needles': tmp});
            self.postMessage({"cmd": "set_results", 'pi': buffon_needle_object.getPI(), 'number_needles':count, 'number_hits':buffon_needle_object.getNumberHits() });
            tmp=new Array();
        }
-
-
        count++;
     }
     buffon_needle_object.computePI();
@@ -47,12 +44,12 @@ self.addEventListener('message', function(e) {
   var data = e.data;
   switch (data.cmd) {
     case 'start':
-    
+
       initialize(data.width, data.height, data.number_of_strips, data.number_of_needles);
       run();
       break;
     case 'pause':
-    buffon_needle_object=undefined;
+      buffon_needle_object=undefined;
       stopped=true;
       break;
     case 'resume':
